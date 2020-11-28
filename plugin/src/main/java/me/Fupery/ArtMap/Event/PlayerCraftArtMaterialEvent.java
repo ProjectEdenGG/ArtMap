@@ -1,9 +1,6 @@
 package me.Fupery.ArtMap.Event;
 
 import me.Fupery.ArtMap.Recipe.ArtMaterial;
-
-import java.util.Arrays;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -11,56 +8,59 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
+
 public class PlayerCraftArtMaterialEvent extends PlayerEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
-    private final ArtMaterial material;
-    private final ItemStack[] ingredients;
-    private final CraftItemEvent event;
-    private boolean cancelled = false;
+	private static final HandlerList handlers = new HandlerList();
+	private final ArtMaterial material;
+	private final ItemStack[] ingredients;
+	private final CraftItemEvent event;
+	private boolean cancelled = false;
 
-    public PlayerCraftArtMaterialEvent(CraftItemEvent event, ArtMaterial material) {
-        super(((Player) event.getWhoClicked()));
-        this.event = event;
-        this.material = material;
-        this.ingredients = event.getInventory().getMatrix();
-    }
+	public PlayerCraftArtMaterialEvent(CraftItemEvent event, ArtMaterial material) {
+		super(((Player) event.getWhoClicked()));
+		this.event = event;
+		this.material = material;
+		this.ingredients = event.getInventory().getMatrix();
+	}
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+	public static HandlerList getHandlerList() {
+		return handlers;
+	}
 
-    public ArtMaterial getMaterial() {
-        return material;
-    }
+	public ArtMaterial getMaterial() {
+		return material;
+	}
 
-    public void setCraftEventCancelled(boolean cancelled) {
-        event.setCancelled(cancelled);
-    }
+	public void setCraftEventCancelled(boolean cancelled) {
+		event.setCancelled(cancelled);
+	}
 
-    public ItemStack getResult() {
-        return event.getCurrentItem();
-    }
+	public ItemStack getResult() {
+		return event.getCurrentItem();
+	}
 
-    public void setResult(ItemStack result) {
-        event.setCurrentItem(result);
-    }
+	public void setResult(ItemStack result) {
+		event.setCurrentItem(result);
+	}
 
-    public ItemStack[] getIngredients() {
-        return Arrays.copyOf(ingredients, ingredients.length);
-    }
+	public ItemStack[] getIngredients() {
+		return Arrays.copyOf(ingredients, ingredients.length);
+	}
 
-    @Override
-    public boolean isCancelled() {
-        return cancelled;
-    }
+	@Override
+	public boolean isCancelled() {
+		return cancelled;
+	}
 
-    @Override
-    public void setCancelled(boolean b) {
-        cancelled = b;
-    }
+	@Override
+	public void setCancelled(boolean b) {
+		cancelled = b;
+	}
 
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
+	@Override
+	public HandlerList getHandlers() {
+		return handlers;
+	}
+
 }

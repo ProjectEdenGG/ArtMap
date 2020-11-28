@@ -1,9 +1,7 @@
 package me.Fupery.ArtMap.Easel;
 
 import me.Fupery.ArtMap.ArtMap;
-import static org.bukkit.entity.EntityType.ARMOR_STAND;
-import static org.bukkit.entity.EntityType.ITEM_FRAME;
-
+import me.Fupery.ArtMap.Config.Lang;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
@@ -14,7 +12,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 
-import me.Fupery.ArtMap.Config.Lang;
+import static org.bukkit.entity.EntityType.ARMOR_STAND;
+import static org.bukkit.entity.EntityType.ITEM_FRAME;
 
 /**
  * Represents a part of an easel object
@@ -41,11 +40,11 @@ public enum EaselPart {
 
 	public static EaselPart getPartType(Entity entity) {
 		switch (entity.getType()) {
-		case ARMOR_STAND:
-			ArmorStand stand = (ArmorStand) entity;
-			return stand.isVisible() ? STAND : (stand.isSmall() ? MARKER : SEAT);
-		case ITEM_FRAME:
-			return FRAME;
+			case ARMOR_STAND:
+				ArmorStand stand = (ArmorStand) entity;
+				return stand.isVisible() ? STAND : (stand.isSmall() ? MARKER : SEAT);
+			case ITEM_FRAME:
+				return FRAME;
 			default:
 				break;
 		}
@@ -55,14 +54,14 @@ public enum EaselPart {
 	public static BlockFace getFacing(double yaw) {
 
 		switch ((int) yaw) {
-		case 0:
-			return BlockFace.SOUTH;
-		case 90:
-			return BlockFace.WEST;
-		case 180:
-			return BlockFace.NORTH;
-		case 270:
-			return BlockFace.EAST;
+			case 0:
+				return BlockFace.SOUTH;
+			case 90:
+				return BlockFace.WEST;
+			case 180:
+				return BlockFace.NORTH;
+			case 270:
+				return BlockFace.EAST;
 		}
 		return BlockFace.SOUTH;
 	}
@@ -76,15 +75,15 @@ public enum EaselPart {
 
 		switch (face) {
 
-		case SOUTH:
-			return 180;
+			case SOUTH:
+				return 180;
 
-		case WEST:
-		case EAST:
-			return 90;
-		
-		default: // NORTH et. al.
-		    return 0;
+			case WEST:
+			case EAST:
+				return 90;
+
+			default: // NORTH et. al.
+				return 0;
 		}
 	}
 
@@ -112,38 +111,38 @@ public enum EaselPart {
 
 				switch (this) {
 
-				case STAND:
-					ArmorStand stand = (ArmorStand) entity;
-					stand.setBasePlate(false);
-					stand.setCustomNameVisible(false);
-					stand.setCustomName(EASEL_ID);
-					stand.setGravity(false);
-					stand.setRemoveWhenFarAway(false);
-					stand.setArms(false);
-					return stand;
+					case STAND:
+						ArmorStand stand = (ArmorStand) entity;
+						stand.setBasePlate(false);
+						stand.setCustomNameVisible(false);
+						stand.setCustomName(EASEL_ID);
+						stand.setGravity(false);
+						stand.setRemoveWhenFarAway(false);
+						stand.setArms(false);
+						return stand;
 
-				case FRAME:
-					ItemFrame frame = (ItemFrame) entity;
-					frame.setFacingDirection(facing, true);
-					frame.setCustomNameVisible(false);
-					return frame;
+					case FRAME:
+						ItemFrame frame = (ItemFrame) entity;
+						frame.setFacingDirection(facing, true);
+						frame.setCustomNameVisible(false);
+						return frame;
 
-				case SEAT:
-					ArmorStand seat = (ArmorStand) entity;
-					seat.setVisible(false);
-					seat.setGravity(false);
-					seat.setArms(false);
-					seat.setRemoveWhenFarAway(true);
-					return seat;
+					case SEAT:
+						ArmorStand seat = (ArmorStand) entity;
+						seat.setVisible(false);
+						seat.setGravity(false);
+						seat.setArms(false);
+						seat.setRemoveWhenFarAway(true);
+						return seat;
 
-				case MARKER:
-					ArmorStand marker = (ArmorStand) entity;
-					marker.setVisible(false);
-					marker.setGravity(false);
-					marker.setRemoveWhenFarAway(true);
-					marker.setSmall(true);
-					return marker;
-				default:
+					case MARKER:
+						ArmorStand marker = (ArmorStand) entity;
+						marker.setVisible(false);
+						marker.setGravity(false);
+						marker.setRemoveWhenFarAway(true);
+						marker.setSmall(true);
+						return marker;
+					default:
 				}
 			}
 		}
@@ -155,23 +154,23 @@ public enum EaselPart {
 		float yaw = 0;
 
 		switch (facing) {
-		case NORTH:
-			z = -this.modifier;
-			yaw = 180;
-			break;
-		case SOUTH:
-			z = this.modifier;
-			yaw = 0;
-			break;
-		case WEST:
-			x = -this.modifier;
-			yaw = 90;
-			break;
-		case EAST:
-			x = this.modifier;
-			yaw = 270;
-			break;
-		default:
+			case NORTH:
+				z = -this.modifier;
+				yaw = 180;
+				break;
+			case SOUTH:
+				z = this.modifier;
+				yaw = 0;
+				break;
+			case WEST:
+				x = -this.modifier;
+				yaw = 90;
+				break;
+			case EAST:
+				x = this.modifier;
+				yaw = 270;
+				break;
+			default:
 		}
 
 		if (this.centred) {

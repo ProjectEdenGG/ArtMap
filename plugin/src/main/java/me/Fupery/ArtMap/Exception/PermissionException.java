@@ -6,17 +6,17 @@ package me.Fupery.ArtMap.Exception;
  */
 public class PermissionException extends ArtMapException {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 
-    public PermissionException(String msg) {
-        super(msg);
-    }
+	public PermissionException(String msg) {
+		super(msg);
+	}
 
-    public PermissionException(String msg, Throwable exception) {
-        super(msg,exception);
-    }
+	public PermissionException(String msg, Throwable exception) {
+		super(msg, exception);
+	}
 
 }

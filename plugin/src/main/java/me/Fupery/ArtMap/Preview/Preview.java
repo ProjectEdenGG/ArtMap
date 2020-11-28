@@ -7,9 +7,10 @@ import java.util.UUID;
 
 public interface Preview {
 
-    boolean start(Player player);
+	boolean start(Player player);
 
-    boolean end(Player player);
+	boolean end(Player player);
 
-    boolean isEventAllowed(UUID player, Event event);
+	boolean isEventAllowed(UUID player, Event event);
+
 }

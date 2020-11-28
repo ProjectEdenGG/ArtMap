@@ -1,133 +1,133 @@
 package me.Fupery.ArtMap.Painting.Brushes;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 import me.Fupery.ArtMap.ArtMap;
 import me.Fupery.ArtMap.Colour.ArtDye;
 import me.Fupery.ArtMap.Colour.Palette;
 import me.Fupery.ArtMap.Painting.Brush;
 import me.Fupery.ArtMap.Painting.CachedPixel;
 import me.Fupery.ArtMap.Painting.CanvasRenderer;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Dye extends Brush {
-    private ArrayList<CachedPixel> dirtyPixels;
+	private ArrayList<CachedPixel> dirtyPixels;
 
-    private Palette palette = ArtMap.instance().getDyePalette();
+	private Palette palette = ArtMap.instance().getDyePalette();
 
-    public Dye(CanvasRenderer renderer, Player player) {
-        super(renderer, player);
-        this.dirtyPixels = new ArrayList<>();
-    }
+	public Dye(CanvasRenderer renderer, Player player) {
+		super(renderer, player);
+		this.dirtyPixels = new ArrayList<>();
+	}
 
-    @Override
-    public List<CachedPixel> paint(BrushAction action, ItemStack brush, long strokeTime) {
-        ArtDye dye = palette.getDye(brush);
-        if (dye == null) {
-            return dirtyPixels;
-        }
-        if (action == BrushAction.LEFT_CLICK) {
-            clean();
-            byte[] pixel = getCurrentPixel();
-            if (pixel != null) {
-                dye.apply(getPixelAt(pixel[0], pixel[1]));
-            }
-        } else {
-            if (strokeTime > 250) {
-                clean();
-            }
-            byte[] pixel = getCurrentPixel();
+	@Override
+	public List<CachedPixel> paint(BrushAction action, ItemStack brush, long strokeTime) {
+		ArtDye dye = palette.getDye(brush);
+		if (dye == null) {
+			return dirtyPixels;
+		}
+		if (action == BrushAction.LEFT_CLICK) {
+			clean();
+			byte[] pixel = getCurrentPixel();
+			if (pixel != null) {
+				dye.apply(getPixelAt(pixel[0], pixel[1]));
+			}
+		} else {
+			if (strokeTime > 250) {
+				clean();
+			}
+			byte[] pixel = getCurrentPixel();
 
-            if (pixel != null) {
+			if (pixel != null) {
 
-                if (dirtyPixels.size() > 0) {
+				if (dirtyPixels.size() > 0) {
 
-                    CachedPixel lastFlowPixel = dirtyPixels.get(dirtyPixels.size() - 1);
+					CachedPixel lastFlowPixel = dirtyPixels.get(dirtyPixels.size() - 1);
 
-                    if (lastFlowPixel.getDye() != this.resultColor(dye, pixel)) {
-                        clean();
-                    } else {
-                        flowBrush(lastFlowPixel.getX(), lastFlowPixel.getY(), pixel[0], pixel[1], dye);
-                        dirtyPixels.add(new CachedPixel(pixel[0], pixel[1], this.resultColor(dye, pixel)));
-                        return dirtyPixels;
-                    }
-                }
-                dye.apply(getPixelAt(pixel[0], pixel[1]));
-                dirtyPixels.add(new CachedPixel(pixel[0], pixel[1], this.resultColor(dye, pixel)));
-            }
-        }
-        return dirtyPixels;
-    }
+					if (lastFlowPixel.getDye() != this.resultColor(dye, pixel)) {
+						clean();
+					} else {
+						flowBrush(lastFlowPixel.getX(), lastFlowPixel.getY(), pixel[0], pixel[1], dye);
+						dirtyPixels.add(new CachedPixel(pixel[0], pixel[1], this.resultColor(dye, pixel)));
+						return dirtyPixels;
+					}
+				}
+				dye.apply(getPixelAt(pixel[0], pixel[1]));
+				dirtyPixels.add(new CachedPixel(pixel[0], pixel[1], this.resultColor(dye, pixel)));
+			}
+		}
+		return dirtyPixels;
+	}
 
-    private byte resultColor(ArtDye dye, byte[] pixel) {
-        return dye.getDyeColour(this.getPixel(pixel[0], pixel[1]));
-    }
+	private byte resultColor(ArtDye dye, byte[] pixel) {
+		return dye.getDyeColour(this.getPixel(pixel[0], pixel[1]));
+	}
 
-    private byte resultColor(ArtDye dye, int x, int y) {
-        return dye.getDyeColour(this.getPixel(x, y));
-    }
- 
-    @Override
-    public boolean checkMaterial(ItemStack brush) {
-        return palette.getDye(brush) != null;
-    }
+	private byte resultColor(ArtDye dye, int x, int y) {
+		return dye.getDyeColour(this.getPixel(x, y));
+	}
 
-    @Override
-    public void clean() {
-        dirtyPixels.clear();
-    }
+	@Override
+	public boolean checkMaterial(ItemStack brush) {
+		return palette.getDye(brush) != null;
+	}
 
-    private void flowBrush(int x, int y, int x2, int y2, ArtDye dye) {
+	@Override
+	public void clean() {
+		dirtyPixels.clear();
+	}
 
-        int w = x2 - x;
-        int h = y2 - y;
+	private void flowBrush(int x, int y, int x2, int y2, ArtDye dye) {
 
-        int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
+		int w = x2 - x;
+		int h = y2 - y;
 
-        if (w != 0) {
-            dx1 = (w > 0) ? 1 : -1;
-            dx2 = (w > 0) ? 1 : -1;
-        }
+		int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
 
-        if (h != 0) {
-            dy1 = (h > 0) ? 1 : -1;
-        }
+		if (w != 0) {
+			dx1 = (w > 0) ? 1 : -1;
+			dx2 = (w > 0) ? 1 : -1;
+		}
 
-        int longest = Math.abs(w);
-        int shortest = Math.abs(h);
+		if (h != 0) {
+			dy1 = (h > 0) ? 1 : -1;
+		}
 
-        if (!(longest > shortest)) {
-            longest = Math.abs(h);
-            shortest = Math.abs(w);
+		int longest = Math.abs(w);
+		int shortest = Math.abs(h);
 
-            if (h < 0) {
-                dy2 = -1;
+		if (!(longest > shortest)) {
+			longest = Math.abs(h);
+			shortest = Math.abs(w);
 
-            } else if (h > 0) {
-                dy2 = 1;
-            }
-            dx2 = 0;
-        }
-        int numerator = longest >> 1;
+			if (h < 0) {
+				dy2 = -1;
 
-        for (int i = 0; i <= longest; i++) {
-            if (!dirtyPixels.contains(new CachedPixel(x, y, this.resultColor(dye, x,y)))) {
-                dye.apply(getPixelAt(x, y));
-            }
-            numerator += shortest;
+			} else if (h > 0) {
+				dy2 = 1;
+			}
+			dx2 = 0;
+		}
+		int numerator = longest >> 1;
 
-            if (!(numerator < longest)) {
-                numerator -= longest;
-                x += dx1;
-                y += dy1;
+		for (int i = 0; i <= longest; i++) {
+			if (!dirtyPixels.contains(new CachedPixel(x, y, this.resultColor(dye, x, y)))) {
+				dye.apply(getPixelAt(x, y));
+			}
+			numerator += shortest;
 
-            } else {
-                x += dx2;
-                y += dy2;
-            }
-        }
-    }
+			if (!(numerator < longest)) {
+				numerator -= longest;
+				x += dx1;
+				y += dy1;
+
+			} else {
+				x += dx2;
+				y += dy2;
+			}
+		}
+	}
+
 }

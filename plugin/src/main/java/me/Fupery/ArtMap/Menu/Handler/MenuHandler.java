@@ -4,7 +4,11 @@ import me.Fupery.ArtMap.Menu.API.ChildMenu;
 import me.Fupery.ArtMap.Menu.Event.MenuCloseReason;
 import me.Fupery.ArtMap.Menu.Event.MenuFactory;
 import me.Fupery.ArtMap.Menu.Event.MenuListener;
-import me.Fupery.ArtMap.Menu.HelpMenu.*;
+import me.Fupery.ArtMap.Menu.HelpMenu.ArtistMenu;
+import me.Fupery.ArtMap.Menu.HelpMenu.DyeMenu;
+import me.Fupery.ArtMap.Menu.HelpMenu.HelpMenu;
+import me.Fupery.ArtMap.Menu.HelpMenu.RecipeMenu;
+import me.Fupery.ArtMap.Menu.HelpMenu.ToolMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -14,73 +18,75 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class MenuHandler {
-    public final MenuList MENU = new MenuList();
-    private final ConcurrentHashMap<UUID, CacheableMenu> openMenus = new ConcurrentHashMap<>();
-    
-    public MenuHandler(JavaPlugin plugin) {
-        new MenuListener(this, plugin);
-    }
+	public final MenuList MENU = new MenuList();
+	private final ConcurrentHashMap<UUID, CacheableMenu> openMenus = new ConcurrentHashMap<>();
 
-    private CacheableMenu getMenu(Player viewer) {
-        return openMenus.get(viewer.getUniqueId());
-    }
+	public MenuHandler(JavaPlugin plugin) {
+		new MenuListener(this, plugin);
+	}
 
-    public boolean isTrackingPlayer(Player player) {
-        return openMenus.containsKey(player.getUniqueId());
-    }
+	private CacheableMenu getMenu(Player viewer) {
+		return openMenus.get(viewer.getUniqueId());
+	}
 
-    public void openMenu(Player viewer, CacheableMenu menu) {
-        if (openMenus.containsKey(viewer.getUniqueId())) closeMenu(viewer, MenuCloseReason.SWITCH);
-        else viewer.closeInventory();//todo check if this works
-        openMenus.put(viewer.getUniqueId(), menu);
-        menu.open(viewer);
-    }
+	public boolean isTrackingPlayer(Player player) {
+		return openMenus.containsKey(player.getUniqueId());
+	}
 
-    public void fireClickEvent(Player viewer, int slot, ClickType clickType) {
-        if (!openMenus.containsKey(viewer.getUniqueId())) return;
-        getMenu(viewer).click(viewer, slot, clickType);
-    }
+	public void openMenu(Player viewer, CacheableMenu menu) {
+		if (openMenus.containsKey(viewer.getUniqueId())) closeMenu(viewer, MenuCloseReason.SWITCH);
+		else viewer.closeInventory();//todo check if this works
+		openMenus.put(viewer.getUniqueId(), menu);
+		menu.open(viewer);
+	}
 
-    public void refreshMenu(Player viewer) {
-        if (!openMenus.containsKey(viewer.getUniqueId())) return;
-        getMenu(viewer).refresh(viewer);
-    }
+	public void fireClickEvent(Player viewer, int slot, ClickType clickType) {
+		if (!openMenus.containsKey(viewer.getUniqueId())) return;
+		getMenu(viewer).click(viewer, slot, clickType);
+	}
 
-    public void closeMenu(Player viewer, MenuCloseReason reason) {
-        if (!openMenus.containsKey(viewer.getUniqueId())) return;
-        CacheableMenu menu = getMenu(viewer);
-        openMenus.remove(viewer.getUniqueId());
-        menu.close(viewer, reason);
-        if (menu instanceof ChildMenu && reason == MenuCloseReason.BACK) {
-            openMenu(viewer, ((ChildMenu) menu).getParent(viewer));
-        }
-    }
+	public void refreshMenu(Player viewer) {
+		if (!openMenus.containsKey(viewer.getUniqueId())) return;
+		getMenu(viewer).refresh(viewer);
+	}
 
-    public void closeAll() {
-        for (UUID uuid : openMenus.keySet()) closeMenu(Bukkit.getPlayer(uuid), MenuCloseReason.SYSTEM);
-        openMenus.clear();
-    }
+	public void closeMenu(Player viewer, MenuCloseReason reason) {
+		if (!openMenus.containsKey(viewer.getUniqueId())) return;
+		CacheableMenu menu = getMenu(viewer);
+		openMenus.remove(viewer.getUniqueId());
+		menu.close(viewer, reason);
+		if (menu instanceof ChildMenu && reason == MenuCloseReason.BACK) {
+			openMenu(viewer, ((ChildMenu) menu).getParent(viewer));
+		}
+	}
 
-    public static class MenuList {
-        public MenuFactory HELP = new StaticMenuFactory(HelpMenu::new);
-        public MenuFactory DYES = new StaticMenuFactory(DyeMenu::new);
-        public MenuFactory TOOLS = new StaticMenuFactory(ToolMenu::new);
-        public MenuFactory ARTIST = new DynamicMenuFactory(ArtistMenu::new);
-        public MenuFactory RECIPE = new ConditionalMenuFactory(new ConditionalMenuFactory.ConditionalGenerator() {
-            @Override
-            public CacheableMenu getConditionTrue() {
-                return new RecipeMenu(true);
-            }
+	public void closeAll() {
+		for (UUID uuid : openMenus.keySet()) closeMenu(Bukkit.getPlayer(uuid), MenuCloseReason.SYSTEM);
+		openMenus.clear();
+	}
 
-            @Override
-            public CacheableMenu getConditionFalse() {
-                return new RecipeMenu(false);
-            }
+	public static class MenuList {
+		public MenuFactory HELP = new StaticMenuFactory(HelpMenu::new);
+		public MenuFactory DYES = new StaticMenuFactory(DyeMenu::new);
+		public MenuFactory TOOLS = new StaticMenuFactory(ToolMenu::new);
+		public MenuFactory ARTIST = new DynamicMenuFactory(ArtistMenu::new);
+		public MenuFactory RECIPE = new ConditionalMenuFactory(new ConditionalMenuFactory.ConditionalGenerator() {
+			@Override
+			public CacheableMenu getConditionTrue() {
+				return new RecipeMenu(true);
+			}
 
-            @Override
-            public boolean evaluateCondition(Player viewer) {
-                return viewer.hasPermission("artmap.admin");
-            }
-        });
-    }
+			@Override
+			public CacheableMenu getConditionFalse() {
+				return new RecipeMenu(false);
+			}
+
+			@Override
+			public boolean evaluateCondition(Player viewer) {
+				return viewer.hasPermission("artmap.admin");
+			}
+		});
+
+	}
+
 }

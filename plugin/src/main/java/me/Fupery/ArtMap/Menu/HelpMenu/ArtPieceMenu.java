@@ -1,19 +1,5 @@
 package me.Fupery.ArtMap.Menu.HelpMenu;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.logging.Level;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.MapMeta;
-
 import me.Fupery.ArtMap.ArtMap;
 import me.Fupery.ArtMap.Config.Lang;
 import me.Fupery.ArtMap.IO.MapArt;
@@ -27,6 +13,19 @@ import me.Fupery.ArtMap.Preview.ArtPreview;
 import me.Fupery.ArtMap.Recipe.ArtItem;
 import me.Fupery.ArtMap.Utils.ItemUtils;
 import net.wesjd.anvilgui.AnvilGUI;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.MapMeta;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.logging.Level;
 
 public class ArtPieceMenu extends ListMenu implements ChildMenu {
 	private ArtistArtworksMenu parent;
@@ -56,7 +55,7 @@ public class ArtPieceMenu extends ListMenu implements ChildMenu {
 			return;
 		ItemStack offHand = viewer.getInventory().getItemInOffHand();
 		if (isPreviewItem(offHand))
-			viewer.getInventory().setItemInOffHand(new ItemStack(Material.AIR));	
+			viewer.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
 	}
 
 	@Override
@@ -124,6 +123,7 @@ public class ArtPieceMenu extends ListMenu implements ChildMenu {
 				}
 			}
 		}
+
 	}
 
 	private static class DeleteButton extends Button {
@@ -155,6 +155,7 @@ public class ArtPieceMenu extends ListMenu implements ChildMenu {
 				});
 			}
 		}
+
 	}
 
 	private static class RenameButton extends Button {
@@ -191,7 +192,7 @@ public class ArtPieceMenu extends ListMenu implements ChildMenu {
 							} catch (SQLException | NoSuchFieldException | IllegalAccessException e) {
 								ArtMap.instance().getLogger().log(Level.SEVERE, "Rename Artwork Failure!", e);
 								player.sendMessage("Error Renaming Artwork check logs.");
-            					return; 
+								return;
 							}
 						});
 						return null;
@@ -204,5 +205,7 @@ public class ArtPieceMenu extends ListMenu implements ChildMenu {
 				}
 			}
 		}
+
 	}
+
 }

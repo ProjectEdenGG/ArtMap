@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.gitlab.blockstack</groupId>
 	<artifactId>ArtMap-parent</artifactId>
@@ -12,22 +13,13 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+		<project.paper.api.version>1.16.4-R0.1-SNAPSHOT</project.paper.api.version>
+		<project.paper.lib.version>1.0.2</project.paper.lib.version>
 	</properties>
 
 	<modules>
 		<module>api</module>
-		<module>compatibility/ASkyBlock</module>
-		<module>compatibility/BentoBox</module>
-		<module>compatibility/Factions</module>
-		<module>compatibility/GriefPrevention</module>
-		<module>compatibility/GriefDefender</module>
-		<module>compatibility/PlotSquared4</module>
 		<module>compatibility/PlotSquared5</module>
-		<module>compatibility/RedProtect</module>
-		<module>compatibility/Residence</module>
-		<module>compatibility/SabreFactions</module>
-		<module>compatibility/Towny</module>
-		<module>compatibility/USkyBlock</module>
 		<module>compatibility/WorldGuard</module>
 		<module>DataTables</module>
 		<module>plugin</module>
@@ -39,37 +31,20 @@
 			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
 		</repository>
 		<repository>
+			<id>paper-repo</id>
+			<url>https://papermc.io/repo/repository/maven-public/</url>
+		</repository>
+		<repository>
 			<id>sk89q-repo</id>
 			<url>http://maven.sk89q.com/repo/</url>
 		</repository>
-		<!-- Something wrong with protocollib maven cert
 		<repository>
 			<id>dmulloy2-repo</id>
 			<url>https://repo.dmulloy2.net/nexus/repository/public/</url>
 		</repository>
-		-->
 		<repository>
 			<id>jitpack.io</id>
 			<url>https://jitpack.io</url>
-		</repository>
-		<repository>
-			<id>bintray-tastybento-maven-repo</id>
-			<name>bintray</name>
-			<url>http://dl.bintray.com/tastybento/maven-repo</url>
-		</repository>
-		<repository>
-			<id>robingrether-repo</id>
-			<url>http://repo.robingrether.de/</url>
-		</repository>
-		<!--
-		<repository>
-			<id>citizen</id>
-			<url>http://repo.citizensnpcs.co</url>
-		</repository>
-		-->
-		<repository>
-			<id>uSkyBlock-mvn-repo</id>
-			<url>https://raw.github.com/rlf/uSkyBlock/mvn-repo/</url>
 		</repository>
 		<repository>
 			<id>codemc-repo</id>
@@ -88,25 +63,7 @@
 			<name>Mojang's Repository</name>
 			<url>https://libraries.minecraft.net/</url>
 		</repository>
-		<!-- Marriage master-->
-		<repository>
-			<id>pcgf-repo</id>
-			<url>https://repo.pcgamingfreaks.at/repository/everything</url>
-		</repository>
-		<!-- My Repo with all the things I couldn't find in the other repos -->
-		<repository>
-			<id>troytech-public-repo</id>
-			<url>https://nexus.troytech.info/repository/public/</url>
-		</repository>
 	</repositories>
-
-	<dependencies>
-		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-			<version>1.1.0.Final</version>
-		</dependency>
-	</dependencies>
 
 	<dependencyManagement>
 		<dependencies>

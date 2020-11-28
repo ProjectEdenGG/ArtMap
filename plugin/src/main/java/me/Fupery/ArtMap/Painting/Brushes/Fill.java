@@ -1,118 +1,118 @@
 package me.Fupery.ArtMap.Painting.Brushes;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 import me.Fupery.ArtMap.ArtMap;
 import me.Fupery.ArtMap.Colour.ArtDye;
 import me.Fupery.ArtMap.Painting.Brush;
 import me.Fupery.ArtMap.Painting.CachedPixel;
 import me.Fupery.ArtMap.Painting.CanvasRenderer;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Fill extends Brush {
-    private final ArrayList<CachedPixel> lastFill;
-    private int axisLength;
-    private Dropper dropper;
+	private final ArrayList<CachedPixel> lastFill;
+	private int axisLength;
+	private Dropper dropper;
 
-    public Fill(CanvasRenderer renderer, Player player, Dropper dropper) {
-        super(renderer, player);
-        lastFill = new ArrayList<>();
-        this.axisLength = getAxisLength();
-        this.dropper = dropper;
-        cooldownMilli = 350;
-    }
+	public Fill(CanvasRenderer renderer, Player player, Dropper dropper) {
+		super(renderer, player);
+		lastFill = new ArrayList<>();
+		this.axisLength = getAxisLength();
+		this.dropper = dropper;
+		cooldownMilli = 350;
+	}
 
-    @Override
-    public List<CachedPixel> paint(BrushAction action, ItemStack bucket, long strokeTime) {
+	@Override
+	public List<CachedPixel> paint(BrushAction action, ItemStack bucket, long strokeTime) {
 
-        if (action == BrushAction.LEFT_CLICK) {
-            ArtDye colour =ArtMap.instance().getDyePalette().getDye(this.player.getInventory().getItemInOffHand());
+		if (action == BrushAction.LEFT_CLICK) {
+			ArtDye colour = ArtMap.instance().getDyePalette().getDye(this.player.getInventory().getItemInOffHand());
 
-            //handle fill with sponge in offhand
-            if(colour == null) {
-                ItemStack offhand = this.player.getInventory().getItemInOffHand();
-                if(dropper.checkMaterial(offhand) && dropper.getColour() != null) {
-                    clean();
-                    fillPixel(dropper.getColour());
-                    return this.lastFill;
-                }
-            }
-            
-            if (colour != null) {
-                clean();
-                fillPixel(colour);
-            }
+			//handle fill with sponge in offhand
+			if (colour == null) {
+				ItemStack offhand = this.player.getInventory().getItemInOffHand();
+				if (dropper.checkMaterial(offhand) && dropper.getColour() != null) {
+					clean();
+					fillPixel(dropper.getColour());
+					return this.lastFill;
+				}
+			}
 
-        } else if (lastFill.size() > 0) {
-            for (CachedPixel cachedPixel : lastFill) {
-                addPixel(cachedPixel.x, cachedPixel.y, cachedPixel.dye);
-            }
-        }
-        return this.lastFill;
-    }
+			if (colour != null) {
+				clean();
+				fillPixel(colour);
+			}
 
-    @Override
-    public boolean checkMaterial(ItemStack bucket) {
-        return bucket.getType() == Material.BUCKET;
-    }
+		} else if (lastFill.size() > 0) {
+			for (CachedPixel cachedPixel : lastFill) {
+				addPixel(cachedPixel.x, cachedPixel.y, cachedPixel.dye);
+			}
+		}
+		return this.lastFill;
+	}
 
-    @Override
-    public void clean() {
-        lastFill.clear();
-    }
+	@Override
+	public boolean checkMaterial(ItemStack bucket) {
+		return bucket.getType() == Material.BUCKET;
+	}
 
-    private void fillPixel(ArtDye colour) {
-        final byte[] pixel = getCurrentPixel();
+	@Override
+	public void clean() {
+		lastFill.clear();
+	}
 
-        if (pixel != null) {
+	private void fillPixel(ArtDye colour) {
+		final byte[] pixel = getCurrentPixel();
 
-            final boolean[][] coloured = new boolean[axisLength][axisLength];
-            final byte clickedColour = getPixelBuffer()[pixel[0]][pixel[1]];
-            final byte setColour = colour.getDyeColour(clickedColour);
+		if (pixel != null) {
 
-            ArtMap.instance().getScheduler().ASYNC.run(() -> fillBucket(coloured, pixel[0], pixel[1], clickedColour, setColour));
-        }
-    }
+			final boolean[][] coloured = new boolean[axisLength][axisLength];
+			final byte clickedColour = getPixelBuffer()[pixel[0]][pixel[1]];
+			final byte setColour = colour.getDyeColour(clickedColour);
 
-    private void fillPixel(byte colour) {
-        final byte[] pixel = getCurrentPixel();
+			ArtMap.instance().getScheduler().ASYNC.run(() -> fillBucket(coloured, pixel[0], pixel[1], clickedColour, setColour));
+		}
+	}
 
-        if (pixel != null) {
+	private void fillPixel(byte colour) {
+		final byte[] pixel = getCurrentPixel();
 
-            final boolean[][] coloured = new boolean[axisLength][axisLength];
-            final byte clickedColour = getPixelBuffer()[pixel[0]][pixel[1]];
-            final byte setColour = colour;
+		if (pixel != null) {
 
-            ArtMap.instance().getScheduler().ASYNC.run(() -> fillBucket(coloured, pixel[0], pixel[1], clickedColour, setColour));
-        }
-    }
+			final boolean[][] coloured = new boolean[axisLength][axisLength];
+			final byte clickedColour = getPixelBuffer()[pixel[0]][pixel[1]];
+			final byte setColour = colour;
 
-    private void fillBucket(boolean[][] coloured, int x, int y, byte sourceColour, byte newColour) {
-        if (x < 0 || y < 0) {
-            return;
-        }
-        if (x >= axisLength || y >= axisLength) {
-            return;
-        }
+			ArtMap.instance().getScheduler().ASYNC.run(() -> fillBucket(coloured, pixel[0], pixel[1], clickedColour, setColour));
+		}
+	}
 
-        if (coloured[x][y]) {
-            return;
-        }
+	private void fillBucket(boolean[][] coloured, int x, int y, byte sourceColour, byte newColour) {
+		if (x < 0 || y < 0) {
+			return;
+		}
+		if (x >= axisLength || y >= axisLength) {
+			return;
+		}
 
-        if (getPixelBuffer()[x][y] != sourceColour) {
-            return;
-        }
-        addPixel(x, y, newColour);
-        coloured[x][y] = true;
-        lastFill.add(new CachedPixel(x, y, sourceColour));
+		if (coloured[x][y]) {
+			return;
+		}
 
-        fillBucket(coloured, x - 1, y, sourceColour, newColour);
-        fillBucket(coloured, x + 1, y, sourceColour, newColour);
-        fillBucket(coloured, x, y - 1, sourceColour, newColour);
-        fillBucket(coloured, x, y + 1, sourceColour, newColour);
-    }
+		if (getPixelBuffer()[x][y] != sourceColour) {
+			return;
+		}
+		addPixel(x, y, newColour);
+		coloured[x][y] = true;
+		lastFill.add(new CachedPixel(x, y, sourceColour));
+
+		fillBucket(coloured, x - 1, y, sourceColour, newColour);
+		fillBucket(coloured, x + 1, y, sourceColour, newColour);
+		fillBucket(coloured, x, y - 1, sourceColour, newColour);
+		fillBucket(coloured, x, y + 1, sourceColour, newColour);
+	}
+
 }

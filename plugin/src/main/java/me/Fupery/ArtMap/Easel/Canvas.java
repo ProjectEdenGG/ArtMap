@@ -1,26 +1,24 @@
 package me.Fupery.ArtMap.Easel;
 
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
-
+import me.Fupery.ArtMap.ArtMap;
+import me.Fupery.ArtMap.Exception.ArtMapException;
+import me.Fupery.ArtMap.IO.Database.Map;
+import me.Fupery.ArtMap.IO.MapArt;
+import me.Fupery.ArtMap.Recipe.ArtItem;
+import me.Fupery.ArtMap.Recipe.ArtMaterial;
+import me.Fupery.ArtMap.Utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.MapMeta;
 
-import me.Fupery.ArtMap.ArtMap;
-import me.Fupery.ArtMap.Exception.ArtMapException;
-import me.Fupery.ArtMap.IO.MapArt;
-import me.Fupery.ArtMap.IO.Database.Map;
-import me.Fupery.ArtMap.Recipe.ArtItem;
-import me.Fupery.ArtMap.Recipe.ArtMaterial;
-import me.Fupery.ArtMap.Utils.ItemUtils;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Represents a painting canvas. Extends ItemStack so that information can be
  * retrieved when it is pulled off the easel.
- *
  */
 public class Canvas {
 
@@ -105,5 +103,7 @@ public class Canvas {
 		public int getOriginalId() {
 			return this.original.getMapId();
 		}
-    }
+
+	}
+
 }

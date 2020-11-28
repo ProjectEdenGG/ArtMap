@@ -1,20 +1,5 @@
 package me.Fupery.ArtMap.Menu.HelpMenu;
 
-import java.sql.SQLException;
-import java.text.MessageFormat;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
-import java.util.logging.Level;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.meta.SkullMeta;
-
 import me.Fupery.ArtMap.ArtMap;
 import me.Fupery.ArtMap.Config.Lang;
 import me.Fupery.ArtMap.Exception.HeadFetchException;
@@ -23,6 +8,20 @@ import me.Fupery.ArtMap.Menu.API.ListMenu;
 import me.Fupery.ArtMap.Menu.API.SoundCompat;
 import me.Fupery.ArtMap.Menu.Button.Button;
 import me.Fupery.ArtMap.Menu.Handler.CacheableMenu;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.meta.SkullMeta;
+
+import java.sql.SQLException;
+import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.UUID;
+import java.util.logging.Level;
 
 public class ArtistMenu extends ListMenu implements ChildMenu {
 
@@ -104,13 +103,14 @@ public class ArtistMenu extends ListMenu implements ChildMenu {
 
 		final UUID artist;
 		String artistName;
+
 		//TODO: Fix this when we rearrange the database
 		public ArtworkListButton(UUID artist, boolean loadHeads) throws HeadFetchException {
 			super(Material.PLAYER_HEAD);
 			this.artist = artist;
 
 			SkullMeta meta = (SkullMeta) getItemMeta();
-			if(loadHeads) {
+			if (loadHeads) {
 				meta = ArtMap.instance().getHeadsCache().getHeadMeta(artist);
 				this.artistName = meta.getDisplayName();
 			} else {
@@ -127,7 +127,9 @@ public class ArtistMenu extends ListMenu implements ChildMenu {
 		public void onClick(Player player, ClickType clickType) {
 			SoundCompat.UI_BUTTON_CLICK.play(player);
 			ArtMap.instance().getMenuHandler().openMenu(player,
-			        new ArtistArtworksMenu(getMenu(), this.artist, this.artistName, player.hasPermission("artmap.admin"), 0));
+					new ArtistArtworksMenu(getMenu(), this.artist, this.artistName, player.hasPermission("artmap.admin"), 0));
 		}
+
 	}
+
 }

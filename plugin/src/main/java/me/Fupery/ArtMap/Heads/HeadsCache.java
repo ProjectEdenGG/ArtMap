@@ -1,5 +1,22 @@
 package me.Fupery.ArtMap.Heads;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+import com.mojang.authlib.properties.PropertyMap;
+import me.Fupery.ArtMap.ArtMap;
+import me.Fupery.ArtMap.Exception.HeadFetchException;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
+
+import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -17,55 +34,37 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 
-import javax.annotation.Nullable;
-import javax.net.ssl.HttpsURLConnection;
-
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
-import com.mojang.authlib.properties.PropertyMap;
-
-import me.Fupery.ArtMap.ArtMap;
-import me.Fupery.ArtMap.Exception.HeadFetchException;
-
 /**
  * Heads handler to be used with caching head textures.
- * 
+ *
  * @author wispoffates
  */
 public class HeadsCache {
 
-	private static JsonParser				parser				= new JsonParser();
-	private static String					API_PROFILE_LINK	= "https://sessionserver.mojang.com/session/minecraft/profile/";
+	private static JsonParser parser = new JsonParser();
+	private static String API_PROFILE_LINK = "https://sessionserver.mojang.com/session/minecraft/profile/";
 
-	private static final Map<UUID, TextureData>	textureCache	= Collections.synchronizedMap( new HashMap<>());
-	/** Map to convert names to UUIDs for players that have never logged in to the server.
+	private static final Map<UUID, TextureData> textureCache = Collections.synchronizedMap(new HashMap<>());
+	/**
+	 * Map to convert names to UUIDs for players that have never logged in to the server.
 	 * This is temporary till DB schema update that adds names to db.
 	 */
 	private static final Map<String, UUID> nameToUUID = new HashMap<>();
-	private static File						cacheFile;
+	private static File cacheFile;
 	private ArtMap plugin;
 
-	/** Loads the cache from disk */
+	/**
+	 * Loads the cache from disk
+	 */
 	public HeadsCache(ArtMap plugin) {
-		this(plugin,plugin.getConfiguration().HEAD_PREFETCH);
+		this(plugin, plugin.getConfiguration().HEAD_PREFETCH);
 	}
 
 	public HeadsCache(ArtMap plugin, boolean prefetch) {
 		this.plugin = plugin;
 		//Load the cache file
-		cacheFile = new File(plugin.getDataFolder(),"heads_cache.json");
-		if(cacheFile.exists()) {
+		cacheFile = new File(plugin.getDataFolder(), "heads_cache.json");
+		if (cacheFile.exists()) {
 			this.loadCacheFile(cacheFile);
 		}
 
@@ -96,7 +95,7 @@ public class HeadsCache {
 			// skip the first one since we dummied it
 			for (int i = 1; i < artists.length; i++) {
 				//check cache
-				if(this.isHeadCached(artists[i])) {
+				if (this.isHeadCached(artists[i])) {
 					loaded++;
 				} else {
 					//hard retrieve from mojang
@@ -110,11 +109,11 @@ public class HeadsCache {
 		} catch (Exception e) {
 			//fall out so we don't error too many times
 		}
-		if((loaded+mojang) == 0 && artistsCount>1) {
+		if ((loaded + mojang) == 0 && artistsCount > 1) {
 			plugin.getLogger().warning("Could not preload any player heads! Is the server in offline mode and not behind a Bungeecord?");
 		} else {
-			plugin.getLogger().info(MessageFormat.format("Loaded {0} from disk cache, and {1} from mojang out of {2} artists.", loaded, mojang,artistsCount - 1));
-			if(loaded+mojang < artistsCount) {
+			plugin.getLogger().info(MessageFormat.format("Loaded {0} from disk cache, and {1} from mojang out of {2} artists.", loaded, mojang, artistsCount - 1));
+			if (loaded + mojang < artistsCount) {
 				plugin.getLogger().info("Remaining artists will be loaded when needed.");
 			}
 		}
@@ -122,35 +121,37 @@ public class HeadsCache {
 
 	/**
 	 * Initialize the cache from a file.
+	 *
 	 * @param cacheFile The file the textures are cached in.
 	 */
 	private void loadCacheFile(File cacheFile) {
-		try( FileReader reader = new FileReader(cacheFile); ) {
-            Gson gson = ArtMap.instance().getGson(true);
-            Type collectionType = new TypeToken<Map<UUID,TextureData>>() {
-            }.getType();
-			Map<UUID,TextureData> loadedCache = gson.fromJson(reader, collectionType);
-			if(loadedCache != null && !loadedCache.isEmpty()) {
+		try (FileReader reader = new FileReader(cacheFile);) {
+			Gson gson = ArtMap.instance().getGson(true);
+			Type collectionType = new TypeToken<Map<UUID, TextureData>>() {
+			}.getType();
+			Map<UUID, TextureData> loadedCache = gson.fromJson(reader, collectionType);
+			if (loadedCache != null && !loadedCache.isEmpty()) {
 				textureCache.putAll(loadedCache);
 			} else {
 				ArtMap.instance().getLogger().warning("HeadCache load was null? Creating new empty cache.");
 			}
-        } catch (Exception e) {
-            ArtMap.instance().getLogger().log(Level.SEVERE, "Failure parsing head cache! Will start with an empty cache.", e);
-        }
+		} catch (Exception e) {
+			ArtMap.instance().getLogger().log(Level.SEVERE, "Failure parsing head cache! Will start with an empty cache.", e);
+		}
 	}
 
 	/**
 	 * Save the cache to a file.
+	 *
 	 * @param cacheFile The file the textures should be cached in.
 	 */
 	private synchronized void saveCacheFile(File cacheFile) {
-		try( FileWriter writer = new FileWriter(cacheFile) ){
+		try (FileWriter writer = new FileWriter(cacheFile)) {
 			Gson gson = ArtMap.instance().getGson(true);
-			Type collectionType = new TypeToken<Map<UUID,TextureData>>() {
+			Type collectionType = new TypeToken<Map<UUID, TextureData>>() {
 			}.getType();
 			gson.toJson(textureCache, collectionType, writer);
-			writer.close();			
+			writer.close();
 		} catch (IOException e) {
 			ArtMap.instance().getLogger().log(Level.SEVERE, "Failure writing head cache!", e);
 		}
@@ -158,9 +159,8 @@ public class HeadsCache {
 
 	/**
 	 * Create a head item with the provided texture.
-	 * 
+	 *
 	 * @param playerId The ID of the player get the skull for.
-	 * 
 	 * @return The Skull.
 	 * @throws HeadFetchException
 	 */
@@ -170,12 +170,12 @@ public class HeadsCache {
 		if (meta == null) { //try loading it the normal way
 			meta = (SkullMeta) head.getItemMeta();
 			OfflinePlayer player = ArtMap.instance().getServer().getOfflinePlayer(playerId);
-			if(player.hasPlayedBefore()) {
+			if (player.hasPlayedBefore()) {
 				meta.setOwningPlayer(player);
 				meta.setDisplayName(player.getName());
 				head.setItemMeta(meta);
 			}
-			return head; 
+			return head;
 		}
 		head.setItemMeta(meta);
 		return head;
@@ -183,6 +183,7 @@ public class HeadsCache {
 
 	/**
 	 * Check if the provided player's texture is cached.
+	 *
 	 * @param playerId The UUID of the player to check.
 	 * @return True if the player texture is cached.
 	 */
@@ -192,11 +193,12 @@ public class HeadsCache {
 
 	/**
 	 * Retrieve the name of the player from the cache.
+	 *
 	 * @param playerId The id of the player to lookup.
 	 * @return The name of the player or null if it wasn't cached.
 	 */
 	public String getPlayerName(UUID playerId) {
-		if(textureCache.containsKey(playerId)) {
+		if (textureCache.containsKey(playerId)) {
 			return textureCache.get(playerId).name;
 		}
 		return null;
@@ -204,15 +206,17 @@ public class HeadsCache {
 
 	/**
 	 * Search the cache for a artist name that matches the search term.
+	 *
 	 * @param term The search term.
 	 * @return An array of matching names and an empty array if none or found.
 	 */
 	public String[] searchCache(String term) {
-		return nameToUUID.keySet().stream().filter( name -> name.contains(term)).toArray(String[]::new);
+		return nameToUUID.keySet().stream().filter(name -> name.contains(term)).toArray(String[]::new);
 	}
 
 	/**
 	 * Retrieve the player id for the given name from the cache.
+	 *
 	 * @param playername The playername to get the ID of.
 	 * @return Optionally the player id if cached.
 	 */
@@ -222,12 +226,11 @@ public class HeadsCache {
 
 	/**
 	 * Create a player skullMeta for the provided player id.
-	 * 
+	 *
 	 * @param playerId The ID of the player to get the skull meta for.
 	 * @return The Skull meta.
 	 * @throws HeadFetchException
 	 */
-	@Nullable
 	public SkullMeta getHeadMeta(UUID playerId) throws HeadFetchException {
 		// is it in the cache?
 		if (!textureCache.containsKey(playerId)) {
@@ -236,12 +239,12 @@ public class HeadsCache {
 		TextureData data = textureCache.get(playerId);
 		if (data == null) {
 			//If mojang is disabled try and get it
-			if(!plugin.getConfiguration().HEAD_FETCH_MOJANG) {
+			if (!plugin.getConfiguration().HEAD_FETCH_MOJANG) {
 				ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
 				SkullMeta meta = getHeadMeta(playerId);
 				meta = (SkullMeta) head.getItemMeta();
 				OfflinePlayer player = ArtMap.instance().getServer().getOfflinePlayer(playerId);
-				if(player.hasPlayedBefore()) {
+				if (player.hasPlayedBefore()) {
 					meta.setOwningPlayer(player);
 					meta.setDisplayName(player.getName());
 					head.setItemMeta(meta);
@@ -270,11 +273,11 @@ public class HeadsCache {
 
 	protected void updateTexture(UUID playerId) throws HeadFetchException {
 		//check if the user has disabled fetching heads from mojang
-		if(!plugin.getConfiguration().HEAD_FETCH_MOJANG) {
+		if (!plugin.getConfiguration().HEAD_FETCH_MOJANG) {
 			return;
 		}
 		Optional<TextureData> data = getSkinUrl(playerId);
-		if(data.isPresent()) {
+		if (data.isPresent()) {
 			textureCache.put(playerId, data.get());
 			this.saveCacheFile(cacheFile);
 		}
@@ -282,7 +285,7 @@ public class HeadsCache {
 
 	/**
 	 * Retrieve the current cache size.
-	 * 
+	 *
 	 * @return The current cache size.
 	 */
 	public int getCacheSize() {
@@ -307,13 +310,13 @@ public class HeadsCache {
 			return sb.toString();
 		} catch (MalformedURLException e) {
 			ArtMap.instance().getLogger().log(Level.SEVERE, "Failure getting head!", e);
-			throw new HeadFetchException("Failure getting head!",e);
+			throw new HeadFetchException("Failure getting head!", e);
 		} catch (IOException e) {
 			ArtMap.instance().getLogger().info("Error retrieving head texture.  Server is likely over API limit temporarily.  The head will be fetched on use later.");
-			throw new HeadFetchException("Error retrieving head texture.  Server is likely over API limit temporarily.  The head will be fetched on use later.",e);
+			throw new HeadFetchException("Error retrieving head texture.  Server is likely over API limit temporarily.  The head will be fetched on use later.", e);
 		} finally {
 			try {
-				if(br != null) {
+				if (br != null) {
 					br.close();
 				}
 			} catch (IOException e) {
@@ -326,32 +329,33 @@ public class HeadsCache {
 		try {
 			String id = uuid.toString().replace("-", "");
 			String json = getContent(API_PROFILE_LINK + id);
-			if(json == null) {
+			if (json == null) {
 				throw new HeadFetchException("Skin texture could not be loaded! invalid uuid!");
 			}
 			JsonObject o = parser.parse(json).getAsJsonObject();
 			String name = o.get("name").getAsString();
-			JsonArray jArray= o.get("properties").getAsJsonArray();
+			JsonArray jArray = o.get("properties").getAsJsonArray();
 			String jsonBase64 = null;
-			if(jArray.size() > 0) {
+			if (jArray.size() > 0) {
 				jsonBase64 = jArray.get(0).getAsJsonObject().get("value").getAsString();
 			} else {
 				return Optional.empty();
 			}
 			return Optional.of(new TextureData(name, jsonBase64));
-		} catch ( Throwable e ) {
+		} catch (Throwable e) {
 			throw new HeadFetchException("Failure parsing skin texture json. You may ignore ths warning.");
 		}
 	}
 
 	private static class TextureData {
-		public String	name;
-		public String	texture;
+		public String name;
+		public String texture;
 
 		public TextureData(String name, String texture) {
 			this.name = name;
 			this.texture = texture;
 		}
+
 	}
 
 }

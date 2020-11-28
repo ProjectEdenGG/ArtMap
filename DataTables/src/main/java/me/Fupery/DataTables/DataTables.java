@@ -1,52 +1,56 @@
 package me.Fupery.DataTables;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.zip.GZIPInputStream;
 
 public class DataTables {
 
-    public static PixelTable loadTable(int resolutionFactor)
-            throws InvalidResolutionFactorException{
+	public static PixelTable loadTable(int resolutionFactor)
+			throws InvalidResolutionFactorException {
 
-        PixelTable pixelTable;
+		PixelTable pixelTable;
 
-        if (resolutionFactor == 1
-                || resolutionFactor == 2
-                || resolutionFactor == 4) {
+		if (resolutionFactor == 1
+				|| resolutionFactor == 2
+				|| resolutionFactor == 4) {
 
-            String fileName = String.format("/table_%s.dat", resolutionFactor);
+			String fileName = String.format("/table_%s.dat", resolutionFactor);
 
-            InputStream pixelTables = DataTables.class.getResourceAsStream(fileName);
+			InputStream pixelTables = DataTables.class.getResourceAsStream(fileName);
 
-            if (pixelTables != null) {
+			if (pixelTables != null) {
 
-                ObjectInputStream ois;
-                GZIPInputStream gis;
+				ObjectInputStream ois;
+				GZIPInputStream gis;
 
-                try {
-                    gis = new GZIPInputStream(pixelTables);
-                    ois = new ObjectInputStream(gis);
+				try {
+					gis = new GZIPInputStream(pixelTables);
+					ois = new ObjectInputStream(gis);
 
-                    pixelTable = (PixelTable) ois.readObject();
+					pixelTable = (PixelTable) ois.readObject();
 
-                    gis.close();
-                    ois.close();
+					gis.close();
+					ois.close();
 
-                    return pixelTable;
+					return pixelTable;
 
-                } catch (ClassNotFoundException | IOException e) {
-                    e.printStackTrace();
-                }
+				} catch (ClassNotFoundException | IOException e) {
+					e.printStackTrace();
+				}
 
-            } else {
-                System.out.println("[ArtMap][DataTables] Table data could not be read.");
-            }
+			} else {
+				System.out.println("[ArtMap][DataTables] Table data could not be read.");
+			}
 
-        } else {
-            throw new InvalidResolutionFactorException();
-        }
-        return null;
-    }
+		} else {
+			throw new InvalidResolutionFactorException();
+		}
+		return null;
+	}
 
-    public static class InvalidResolutionFactorException extends Throwable { }
+	public static class InvalidResolutionFactorException extends Throwable {
+	}
+
 }

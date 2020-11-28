@@ -11,27 +11,28 @@ import org.bukkit.inventory.ItemStack;
 
 public class RecipePreview extends BasicMenu {
 
-    private final ArtMaterial recipe;
+	private final ArtMaterial recipe;
 
-    public RecipePreview(ArtMaterial recipe) {
-        super(String.format(Lang.RECIPE_HEADER.get(), recipe.name().toLowerCase()),
-                InventoryType.DISPENSER);
-        this.recipe = recipe;
-    }
+	public RecipePreview(ArtMaterial recipe) {
+		super(String.format(Lang.RECIPE_HEADER.get(), recipe.name().toLowerCase()),
+				InventoryType.DISPENSER);
+		this.recipe = recipe;
+	}
 
-    @Override
-    public void onMenuOpenEvent(Player viewer) {
-        viewer.updateInventory();
-    }
+	@Override
+	public void onMenuOpenEvent(Player viewer) {
+		viewer.updateInventory();
+	}
 
-    @Override
-    public Button[] getButtons() {
-        ItemStack[] preview = recipe.getPreview();
-        Button[] buttons = new Button[preview.length];
+	@Override
+	public Button[] getButtons() {
+		ItemStack[] preview = recipe.getPreview();
+		Button[] buttons = new Button[preview.length];
 
-        for (int i = 0; i < preview.length; i++) {
-            buttons[i] = preview[i] != null ? new StaticButton(preview[i]) : null;
-        }
-        return buttons;
-    }
+		for (int i = 0; i < preview.length; i++) {
+			buttons[i] = preview[i] != null ? new StaticButton(preview[i]) : null;
+		}
+		return buttons;
+	}
+
 }

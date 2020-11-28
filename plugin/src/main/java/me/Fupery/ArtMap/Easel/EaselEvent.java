@@ -1,21 +1,20 @@
 package me.Fupery.ArtMap.Easel;
 
-import java.sql.SQLException;
-import java.util.logging.Level;
-
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 import me.Fupery.ArtMap.ArtMap;
 import me.Fupery.ArtMap.Config.Lang;
 import me.Fupery.ArtMap.Exception.ArtMapException;
-import me.Fupery.ArtMap.IO.MapArt;
 import me.Fupery.ArtMap.IO.Database.Map;
+import me.Fupery.ArtMap.IO.MapArt;
 import me.Fupery.ArtMap.Recipe.ArtMaterial;
 import me.Fupery.ArtMap.Utils.ItemUtils;
 import me.Fupery.ArtMap.api.Easel.ClickType;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.sql.SQLException;
+import java.util.logging.Level;
 
 public final class EaselEvent {
 	private final Easel easel;
@@ -75,60 +74,60 @@ public final class EaselEvent {
 						map = ArtMap.instance().getArtDatabase().createMap();
 					} catch (NoSuchFieldException | IllegalAccessException e) {
 						player.sendMessage(
-							ChatColor.RED + " Severe Error.  Pleae contact a server Admin! " + ChatColor.RESET);
+								ChatColor.RED + " Severe Error.  Pleae contact a server Admin! " + ChatColor.RESET);
 						ArtMap.instance().getLogger().log(Level.SEVERE, "Error creating map!", e);
 					}
-				if (map == null) {
-					player.sendMessage(
-							ChatColor.RED + " Severe Error.  Pleae contact a server Admin! " + ChatColor.RESET);
-					return;
-				}
-				map.update(player);
-				mountCanvas(itemInHand, new Canvas(map));
-			} else if (material == ArtMaterial.MAP_ART) {
-				// Edit an artwork on the easel
-				ArtMap.instance().getScheduler().ASYNC.run(() -> {
-					MapArt art;
-					try {
-						art = ArtMap.instance().getArtDatabase().getArtwork(ItemUtils.getMapID(itemInHand));
-					} catch(Exception e) {
-						player.sendMessage("Error placing art on the Easel!");
-						ArtMap.instance().getLogger().log(Level.SEVERE, "Error placing art on easel for edit!",e );
+					if (map == null) {
+						player.sendMessage(
+								ChatColor.RED + " Severe Error.  Pleae contact a server Admin! " + ChatColor.RESET);
 						return;
 					}
-					ArtMap.instance().getScheduler().SYNC.run(() -> {
-						if (art != null) {
-							if (!player.getUniqueId().equals(art.getArtistPlayer().getUniqueId()) && !player.hasPermission("artmap.admin")) {
-								Lang.ActionBar.NO_EDIT_PERM.send(player);
-								easel.playEffect(EaselEffect.USE_DENIED);
-								return;
-							}
-							try {
-								Canvas canvas = new Canvas.CanvasCopy(art.getMap().cloneMap(), art);
-								mountCanvas(itemInHand, canvas);
-							} catch (Exception e) {
-								player.sendMessage("Error placing art on the Easel!");
-								ArtMap.instance().getLogger().log(Level.SEVERE, "Error placing art on easel for edit!",e );
-							}
-						} else {
-							Lang.ActionBar.NEED_CANVAS.send(player);
-							easel.playEffect(EaselEffect.USE_DENIED);
+					map.update(player);
+					mountCanvas(itemInHand, new Canvas(map));
+				} else if (material == ArtMaterial.MAP_ART) {
+					// Edit an artwork on the easel
+					ArtMap.instance().getScheduler().ASYNC.run(() -> {
+						MapArt art;
+						try {
+							art = ArtMap.instance().getArtDatabase().getArtwork(ItemUtils.getMapID(itemInHand));
+						} catch (Exception e) {
+							player.sendMessage("Error placing art on the Easel!");
+							ArtMap.instance().getLogger().log(Level.SEVERE, "Error placing art on easel for edit!", e);
+							return;
 						}
+						ArtMap.instance().getScheduler().SYNC.run(() -> {
+							if (art != null) {
+								if (!player.getUniqueId().equals(art.getArtistPlayer().getUniqueId()) && !player.hasPermission("artmap.admin")) {
+									Lang.ActionBar.NO_EDIT_PERM.send(player);
+									easel.playEffect(EaselEffect.USE_DENIED);
+									return;
+								}
+								try {
+									Canvas canvas = new Canvas.CanvasCopy(art.getMap().cloneMap(), art);
+									mountCanvas(itemInHand, canvas);
+								} catch (Exception e) {
+									player.sendMessage("Error placing art on the Easel!");
+									ArtMap.instance().getLogger().log(Level.SEVERE, "Error placing art on easel for edit!", e);
+								}
+							} else {
+								Lang.ActionBar.NEED_CANVAS.send(player);
+								easel.playEffect(EaselEffect.USE_DENIED);
+							}
+						});
 					});
-				});
-			} else {
-				Lang.ActionBar.NEED_CANVAS.send(player);
-				easel.playEffect(EaselEffect.USE_DENIED);
-			}
-			return;
-
-		case SHIFT_RIGHT_CLICK:
-			if (easel.hasItem()) {
-				this.player.sendMessage(Lang.SAVE_ARTWORK.get());
-				this.player.sendMessage(Lang.SAVE_ARTWORK_2.get());
+				} else {
+					Lang.ActionBar.NEED_CANVAS.send(player);
+					easel.playEffect(EaselEffect.USE_DENIED);
+				}
 				return;
-			}
-			easel.breakEasel();
+
+			case SHIFT_RIGHT_CLICK:
+				if (easel.hasItem()) {
+					this.player.sendMessage(Lang.SAVE_ARTWORK.get());
+					this.player.sendMessage(Lang.SAVE_ARTWORK_2.get());
+					return;
+				}
+				easel.breakEasel();
 		}
 	}
 
@@ -138,4 +137,5 @@ public final class EaselEvent {
 		removed.setAmount(1);
 		player.getInventory().removeItem(removed);
 	}
+
 }

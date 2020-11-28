@@ -1,6 +1,5 @@
 package me.Fupery.ArtMap.Menu.Event;
 
-import me.Fupery.ArtMap.ArtMap;
 import me.Fupery.ArtMap.Menu.Handler.MenuHandler;
 import me.Fupery.ArtMap.Menu.HelpMenu.ArtistArtworksMenu;
 import org.bukkit.Bukkit;
@@ -22,84 +21,86 @@ import static me.Fupery.ArtMap.Menu.Event.MenuEvent.MenuCloseEvent;
 import static me.Fupery.ArtMap.Menu.Event.MenuEvent.MenuInteractEvent;
 
 public class MenuListener implements Listener {
-    private final MenuHandler handler;
+	private final MenuHandler handler;
 
-    public MenuListener(MenuHandler handler, JavaPlugin plugin) {
-        this.handler = handler;
-        Bukkit.getPluginManager().registerEvents(this, plugin);
-        Bukkit.getPluginManager().registerEvents(new SwapHandListener(), plugin);
-    }
+	public MenuListener(MenuHandler handler, JavaPlugin plugin) {
+		this.handler = handler;
+		Bukkit.getPluginManager().registerEvents(this, plugin);
+		Bukkit.getPluginManager().registerEvents(new SwapHandListener(), plugin);
+	}
 
-    private void fireMenuEvent(MenuEvent event) {
-        Player player = event.getPlayer();
-        if (event instanceof MenuInteractEvent) {
-            MenuInteractEvent interactEvent = ((MenuInteractEvent) event);
-            handler.fireClickEvent(player, interactEvent.getSlot(), interactEvent.getClick());
-        } else if (event instanceof MenuCloseEvent) {
-            MenuCloseReason reason = ((MenuCloseEvent) event).getReason();
-            handler.closeMenu(player, reason);
-        }
-    }
+	private void fireMenuEvent(MenuEvent event) {
+		Player player = event.getPlayer();
+		if (event instanceof MenuInteractEvent) {
+			MenuInteractEvent interactEvent = ((MenuInteractEvent) event);
+			handler.fireClickEvent(player, interactEvent.getSlot(), interactEvent.getClick());
+		} else if (event instanceof MenuCloseEvent) {
+			MenuCloseReason reason = ((MenuCloseEvent) event).getReason();
+			handler.closeMenu(player, reason);
+		}
+	}
 
-    @EventHandler
-    public void onMenuInteract(final InventoryClickEvent event) {
-        if (!handler.isTrackingPlayer((Player) event.getWhoClicked())) {
-            return;
-        }
+	@EventHandler
+	public void onMenuInteract(final InventoryClickEvent event) {
+		if (!handler.isTrackingPlayer((Player) event.getWhoClicked())) {
+			return;
+		}
 
-        event.setCancelled(true);
+		event.setCancelled(true);
 
-        final Player player = (Player) event.getWhoClicked();
+		final Player player = (Player) event.getWhoClicked();
 
-        if (event.getClickedInventory() != player.getOpenInventory().getTopInventory()) {
-            return;
-        }
+		if (event.getClickedInventory() != player.getOpenInventory().getTopInventory()) {
+			return;
+		}
 
-        fireMenuEvent(new MenuInteractEvent(player, event.getInventory(), event.getSlot(), event.getClick()));
-    }
+		fireMenuEvent(new MenuInteractEvent(player, event.getInventory(), event.getSlot(), event.getClick()));
+	}
 
-    @EventHandler
-    public void onItemDrag(InventoryDragEvent event) {
+	@EventHandler
+	public void onItemDrag(InventoryDragEvent event) {
 
-        if (!handler.isTrackingPlayer((Player) event.getWhoClicked())) {
-            return;
-        }
-        event.setResult(Event.Result.DENY);
-        event.setCancelled(true);
-    }
+		if (!handler.isTrackingPlayer((Player) event.getWhoClicked())) {
+			return;
+		}
+		event.setResult(Event.Result.DENY);
+		event.setCancelled(true);
+	}
 
-    @EventHandler
-    public void onMenuClose(InventoryCloseEvent event) {
-        Player player = ((Player) event.getPlayer());
+	@EventHandler
+	public void onMenuClose(InventoryCloseEvent event) {
+		Player player = ((Player) event.getPlayer());
 
-        if (handler.isTrackingPlayer(player)) {
-            fireMenuEvent(new MenuCloseEvent(player, event.getInventory(), MenuCloseReason.CLIENT));
-        }
-    }
+		if (handler.isTrackingPlayer(player)) {
+			fireMenuEvent(new MenuCloseEvent(player, event.getInventory(), MenuCloseReason.CLIENT));
+		}
+	}
 
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        if (handler.isTrackingPlayer(event.getPlayer())) {
-            fireMenuEvent(new MenuCloseEvent(event.getPlayer(), MenuCloseReason.QUIT));
-        }
-    }
+	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent event) {
+		if (handler.isTrackingPlayer(event.getPlayer())) {
+			fireMenuEvent(new MenuCloseEvent(event.getPlayer(), MenuCloseReason.QUIT));
+		}
+	}
 
-    @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent event) {
-        if (handler.isTrackingPlayer(event.getEntity())) {
-            fireMenuEvent(new MenuCloseEvent(event.getEntity(), MenuCloseReason.DEATH));
-            for (ItemStack item : event.getDrops()) {
-                if (ArtistArtworksMenu.isPreviewItem(item)) item.setType(Material.AIR);
-            }
-        }
-    }
+	@EventHandler
+	public void onPlayerDeath(PlayerDeathEvent event) {
+		if (handler.isTrackingPlayer(event.getEntity())) {
+			fireMenuEvent(new MenuCloseEvent(event.getEntity(), MenuCloseReason.DEATH));
+			for (ItemStack item : event.getDrops()) {
+				if (ArtistArtworksMenu.isPreviewItem(item)) item.setType(Material.AIR);
+			}
+		}
+	}
 
-    private class SwapHandListener implements Listener {
-        @EventHandler
-        public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
-            if (handler.isTrackingPlayer(event.getPlayer())) {
-                event.setCancelled(true);
-            }
-        }
-    }
+	private class SwapHandListener implements Listener {
+		@EventHandler
+		public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
+			if (handler.isTrackingPlayer(event.getPlayer())) {
+				event.setCancelled(true);
+			}
+		}
+
+	}
+
 }

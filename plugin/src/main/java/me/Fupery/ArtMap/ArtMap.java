@@ -1,24 +1,7 @@
 package me.Fupery.ArtMap;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.map.MapView;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.java.JavaPluginLoader;
-
 import me.Fupery.ArtMap.Colour.BasicPalette;
 import me.Fupery.ArtMap.Colour.Palette;
 import me.Fupery.ArtMap.Command.CommandHandler;
@@ -27,13 +10,13 @@ import me.Fupery.ArtMap.Config.Configuration;
 import me.Fupery.ArtMap.Config.Lang;
 import me.Fupery.ArtMap.Easel.Easel;
 import me.Fupery.ArtMap.Heads.HeadsCache;
-import me.Fupery.ArtMap.IO.PixelTableManager;
 import me.Fupery.ArtMap.IO.Database.Database;
 import me.Fupery.ArtMap.IO.Legacy.DatabaseConverter;
 import me.Fupery.ArtMap.IO.Legacy.FlatDatabaseConverter;
 import me.Fupery.ArtMap.IO.Legacy.V2DatabaseConverter;
-import me.Fupery.ArtMap.IO.Protocol.ProtocolHandler;
+import me.Fupery.ArtMap.IO.PixelTableManager;
 import me.Fupery.ArtMap.IO.Protocol.Channel.ChannelCacheManager;
+import me.Fupery.ArtMap.IO.Protocol.ProtocolHandler;
 import me.Fupery.ArtMap.Listeners.EventManager;
 import me.Fupery.ArtMap.Menu.Handler.MenuHandler;
 import me.Fupery.ArtMap.Painting.ArtistHandler;
@@ -42,6 +25,21 @@ import me.Fupery.ArtMap.Recipe.RecipeLoader;
 import me.Fupery.ArtMap.Utils.Reflection;
 import me.Fupery.ArtMap.Utils.Scheduler;
 import me.Fupery.ArtMap.api.Utils.VersionHandler;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.map.MapView;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.java.JavaPluginLoader;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 public class ArtMap extends JavaPlugin {
 
@@ -72,6 +70,7 @@ public class ArtMap extends JavaPlugin {
 
 	/**
 	 * Debug method - Used for junit mocking!
+	 *
 	 * @param artmap The mock instance.
 	 */
 	public static void setInstance(ArtMap artmap) {
@@ -130,7 +129,7 @@ public class ArtMap extends JavaPlugin {
 		return this.reflection;
 	}
 
-	public ConcurrentHashMap<Location,Easel> getEasels() {
+	public ConcurrentHashMap<Location, Easel> getEasels() {
 		return this.easels;
 	}
 
@@ -157,7 +156,7 @@ public class ArtMap extends JavaPlugin {
 
 	//Testing constructor
 	public ArtMap(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
-		super(loader,description,dataFolder,file);
+		super(loader, description, dataFolder, file);
 		easels = new ConcurrentHashMap<>();
 	}
 
@@ -178,7 +177,7 @@ public class ArtMap extends JavaPlugin {
 			dyePalette = new BasicPalette();
 			database = new Database(this);
 			dbUpgradeNeeded = this.checkIfDatabaseUpgradeNeeded();
-			this.getLogger().info(" MC version: " + bukkitVersion.toString() ) ;
+			this.getLogger().info(" MC version: " + bukkitVersion.toString());
 			if ((pixelTable = PixelTableManager.buildTables(this)) == null) {
 				getLogger().warning(Lang.INVALID_DATA_TABLES.get());
 				getPluginLoader().disablePlugin(this);
@@ -193,7 +192,7 @@ public class ArtMap extends JavaPlugin {
 			previewManager = new PreviewManager();
 			menuHandler = new MenuHandler(this);
 			PluginCommand artCommand = getCommand("art");
-			if(artCommand!=null) {
+			if (artCommand != null) {
 				artCommand.setExecutor(new CommandHandler());
 			} else {
 				getLogger().severe("Failed to bind /art or /artmap! Disabling...");
@@ -202,33 +201,32 @@ public class ArtMap extends JavaPlugin {
 			}
 			// load the artist button cache
 			headsCache = new HeadsCache(this);
-		} catch( Exception e ) {
-			getLogger().log(Level.SEVERE,"Failure",e);
+		} catch (Exception e) {
+			getLogger().log(Level.SEVERE, "Failure", e);
 			getPluginLoader().disablePlugin(this);
 		}
 	}
 
 	@Override
 	public void onDisable() {
-		previewManager.endAllPreviews();
-		artistHandler.stop();
-		menuHandler.closeAll();
-		eventManager.unregisterAll();
-		database.close();
-//        recipeLoader.unloadRecipes();
-		reloadConfig();
-		pluginInstance = null;
+		try { previewManager.endAllPreviews();		} catch (Throwable ex) { ex.printStackTrace(); }
+		try { artistHandler.stop();					} catch (Throwable ex) { ex.printStackTrace(); }
+		try { menuHandler.closeAll();				} catch (Throwable ex) { ex.printStackTrace(); }
+		try { eventManager.unregisterAll();			} catch (Throwable ex) { ex.printStackTrace(); }
+		try { database.close();						} catch (Throwable ex) { ex.printStackTrace(); }
+		try { reloadConfig();						} catch (Throwable ex) { ex.printStackTrace(); }
+		try { pluginInstance = null;				} catch (Throwable ex) { ex.printStackTrace(); }
 	}
 
 	private boolean checkIfDatabaseUpgradeNeeded() {
 		DatabaseConverter flatDatabaseConverter = new FlatDatabaseConverter(instance());
 		DatabaseConverter v2DatabaseConverter = new V2DatabaseConverter(instance());
-		if(flatDatabaseConverter.isNeeded()) {
-			instance().getLogger().log(Level.WARNING,"Flat Database Coversion needed! Pleae run '/artmap convert'");
+		if (flatDatabaseConverter.isNeeded()) {
+			instance().getLogger().log(Level.WARNING, "Flat Database Coversion needed! Pleae run '/artmap convert'");
 			return true;
 		}
-		if(v2DatabaseConverter.isNeeded()) {
-			instance().getLogger().log(Level.WARNING,"V2 Database Coversion needed! Please run '/art convert'");
+		if (v2DatabaseConverter.isNeeded()) {
+			instance().getLogger().log(Level.WARNING, "V2 Database Coversion needed! Please run '/art convert'");
 			return true;
 		}
 		return false;
@@ -244,7 +242,7 @@ public class ArtMap extends JavaPlugin {
 					getLogger().warning(writeError + " Error: Destination cannot be created.");
 				}
 			} catch (IOException e) {
-				getLogger().log(Level.SEVERE,writeError,e);
+				getLogger().log(Level.SEVERE, writeError, e);
 				return false;
 			}
 		return true;
@@ -256,7 +254,7 @@ public class ArtMap extends JavaPlugin {
 
 	/**
 	 * Retrieve primed gson instance.
-	 * 
+	 *
 	 * @param pretty Enable pretty print.
 	 * @return GSON instance.
 	 */
@@ -268,13 +266,13 @@ public class ArtMap extends JavaPlugin {
 		return builder.create();
 	}
 
-		/**
+	/**
 	 * Wrap retrieving map by id to keep depreciated method call in one place.
-	 * 
+	 *
 	 * @param id The id of the map to retrieve.
 	 * @return The requested MapView or null if it cannot be loaded or does not exist.
 	 */
-	@SuppressWarnings( "deprecation" )
+	@SuppressWarnings("deprecation")
 	public static MapView getMap(int id) {
 		return Bukkit.getMap(id);
 	}

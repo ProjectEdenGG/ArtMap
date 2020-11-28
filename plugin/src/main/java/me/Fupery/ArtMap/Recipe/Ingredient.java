@@ -5,58 +5,61 @@ import org.bukkit.inventory.ItemStack;
 
 public interface Ingredient {
 
-    Material getMaterial();
+	Material getMaterial();
 
-    int getAmount();
+	int getAmount();
 
-    ItemStack toItemStack();
+	ItemStack toItemStack();
 
-    class WrappedMaterial implements Ingredient {
-        private final Material material;
-        private final int amount;
+	class WrappedMaterial implements Ingredient {
+		private final Material material;
+		private final int amount;
 
 		WrappedMaterial(Material material, int amount) {
-            this.material = material;
-            this.amount = amount;
-        }
+			this.material = material;
+			this.amount = amount;
+		}
 
-        @Override
-        public Material getMaterial() {
-            return material;
-        }
+		@Override
+		public Material getMaterial() {
+			return material;
+		}
 
-        @Override
-        public int getAmount() {
-            return amount;
-        }
+		@Override
+		public int getAmount() {
+			return amount;
+		}
 
-        @Override
-        public ItemStack toItemStack() {
+		@Override
+		public ItemStack toItemStack() {
 			return new ItemStack(material, amount);
-        }
-    }
+		}
 
-    class WrappedItem implements Ingredient {
+	}
 
-        private final ItemStack item;
+	class WrappedItem implements Ingredient {
 
-        public WrappedItem(ItemStack item) {
-            this.item = item;
-        }
+		private final ItemStack item;
 
-        @Override
-        public Material getMaterial() {
-            return item.getType();
-        }
+		public WrappedItem(ItemStack item) {
+			this.item = item;
+		}
 
-        @Override
-        public int getAmount() {
-            return item.getAmount();
-        }
+		@Override
+		public Material getMaterial() {
+			return item.getType();
+		}
 
-        @Override
-        public ItemStack toItemStack() {
-            return item.clone();
-        }
-    }
+		@Override
+		public int getAmount() {
+			return item.getAmount();
+		}
+
+		@Override
+		public ItemStack toItemStack() {
+			return item.clone();
+		}
+
+	}
+
 }

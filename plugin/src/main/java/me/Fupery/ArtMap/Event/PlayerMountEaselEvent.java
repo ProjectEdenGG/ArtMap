@@ -10,36 +10,37 @@ import org.bukkit.event.player.PlayerEvent;
  * Cancellable event called when a player mounts an easel
  */
 public class PlayerMountEaselEvent extends PlayerEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
-    private final Easel easel;
-    private boolean cancelled;
+	private static final HandlerList handlers = new HandlerList();
+	private final Easel easel;
+	private boolean cancelled;
 
-    public PlayerMountEaselEvent(Player who, Easel easel) {
-        super(who);
-        this.easel = easel;
-        cancelled = false;
-    }
+	public PlayerMountEaselEvent(Player who, Easel easel) {
+		super(who);
+		this.easel = easel;
+		cancelled = false;
+	}
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+	public static HandlerList getHandlerList() {
+		return handlers;
+	}
 
-    public Easel getEasel() {
-        return easel;
-    }
+	public Easel getEasel() {
+		return easel;
+	}
 
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
+	@Override
+	public HandlerList getHandlers() {
+		return handlers;
+	}
 
-    @Override
-    public boolean isCancelled() {
-        return cancelled;
-    }
+	@Override
+	public boolean isCancelled() {
+		return cancelled;
+	}
 
-    @Override
-    public void setCancelled(boolean b) {
-        cancelled = b;
-    }
+	@Override
+	public void setCancelled(boolean b) {
+		cancelled = b;
+	}
+
 }

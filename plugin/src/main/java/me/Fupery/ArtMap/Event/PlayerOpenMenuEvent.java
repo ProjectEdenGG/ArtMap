@@ -8,18 +8,19 @@ import org.bukkit.event.player.PlayerEvent;
  * Called when the player opens a help menu
  */
 public class PlayerOpenMenuEvent extends PlayerEvent {
-    private static final HandlerList handlers = new HandlerList();
+	private static final HandlerList handlers = new HandlerList();
 
-    public PlayerOpenMenuEvent(Player who) {
-        super(who);
-    }
+	public PlayerOpenMenuEvent(Player who) {
+		super(who);
+	}
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+	public static HandlerList getHandlerList() {
+		return handlers;
+	}
 
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
+	@Override
+	public HandlerList getHandlers() {
+		return handlers;
+	}
+
 }

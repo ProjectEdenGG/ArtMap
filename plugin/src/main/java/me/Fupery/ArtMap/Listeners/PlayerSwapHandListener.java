@@ -5,15 +5,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 
 class PlayerSwapHandListener implements RegisteredListener {
-    @EventHandler
-    public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
-        if (ArtMap.instance().getPreviewManager().endPreview(event.getPlayer())) {
-            event.setCancelled(true);
-        }
-    }
+	@EventHandler
+	public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
+		if (ArtMap.instance().getPreviewManager().endPreview(event.getPlayer())) {
+			event.setCancelled(true);
+		}
+	}
 
-    @Override
-    public void unregister() {
-        PlayerSwapHandItemsEvent.getHandlerList().unregister(this);
-    }
+	@Override
+	public void unregister() {
+		PlayerSwapHandItemsEvent.getHandlerList().unregister(this);
+	}
+
 }

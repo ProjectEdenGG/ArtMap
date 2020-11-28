@@ -1,9 +1,12 @@
 package me.Fupery.ArtMap.Command;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.logging.Level;
-
+import me.Fupery.ArtMap.ArtMap;
+import me.Fupery.ArtMap.Config.Lang;
+import me.Fupery.ArtMap.Event.PlayerOpenMenuEvent;
+import me.Fupery.ArtMap.IO.MapArt;
+import me.Fupery.ArtMap.Menu.Handler.MenuHandler;
+import me.Fupery.ArtMap.Recipe.ArtMaterial;
+import me.Fupery.ArtMap.Utils.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,21 +21,17 @@ import org.bukkit.map.MapView;
 import org.bukkit.map.MapView.Scale;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.Fupery.ArtMap.ArtMap;
-import me.Fupery.ArtMap.Config.Lang;
-import me.Fupery.ArtMap.Event.PlayerOpenMenuEvent;
-import me.Fupery.ArtMap.IO.MapArt;
-import me.Fupery.ArtMap.Menu.Handler.MenuHandler;
-import me.Fupery.ArtMap.Recipe.ArtMaterial;
-import me.Fupery.ArtMap.Utils.ItemUtils;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.logging.Level;
 
 public class CommandHandler implements CommandExecutor {
 
-    private final HashMap<String, AsyncCommand> commands;
+	private final HashMap<String, AsyncCommand> commands;
 
-    public CommandHandler() {
-        commands = new HashMap<>();
-        //Commands go here - note that they are run on an async thread
+	public CommandHandler() {
+		commands = new HashMap<>();
+		//Commands go here - note that they are run on an async thread
 
 		commands.put("save", new CommandSave());
 
@@ -64,6 +63,7 @@ public class CommandHandler implements CommandExecutor {
 				mapView.setScale(Scale.CLOSEST);
 				mapView.addRenderer(new MapRenderer() {
 					boolean done = false;
+
 					@Override
 					public void render(MapView view, MapCanvas canvas, Player player) {
 						if (!done) {
@@ -87,7 +87,7 @@ public class CommandHandler implements CommandExecutor {
 				((Player) sender).getInventory().setItemInMainHand(map);
 			}
 		});
-		
+
 		commands.put("give", new AsyncCommand("artmap.admin", "/art give <player> <easel|canvas|paintbrush|artwork:<title>> [amount]", true) {
 			@Override
 			public void runCommand(CommandSender sender, String[] args, ReturnMessage msg) {
@@ -111,7 +111,7 @@ public class CommandHandler implements CommandExecutor {
 									return;
 								}
 								item = art.getMapItem();
-							} catch( Exception e) {
+							} catch (Exception e) {
 								sender.sendMessage(Lang.PREFIX + ChatColor.RED + "Error retrieving art! Check logs for details.");
 								ArtMap.instance().getLogger().log(Level.SEVERE, "Error retrieving art!", e);
 							}
@@ -134,41 +134,41 @@ public class CommandHandler implements CommandExecutor {
 			}
 		});
 
-        //convenience commands
+		//convenience commands
 		commands.put("help", new AsyncCommand("artmap.menu", "/art [help]", true) {
-            @Override
-            public void runCommand(CommandSender sender, String[] args, ReturnMessage msg) {
-                if (sender instanceof Player) {
-                    ArtMap.instance().getScheduler().SYNC.run(() -> {
-                        if (args.length > 0) {
+			@Override
+			public void runCommand(CommandSender sender, String[] args, ReturnMessage msg) {
+				if (sender instanceof Player) {
+					ArtMap.instance().getScheduler().SYNC.run(() -> {
+						if (args.length > 0) {
 							Lang.Array.CONSOLE_HELP.send(sender);
 							return;
-                        }
-                        PlayerOpenMenuEvent event = new PlayerOpenMenuEvent((Player) sender);
-                        Bukkit.getServer().getPluginManager().callEvent(event);
-                        MenuHandler menuHandler = ArtMap.instance().getMenuHandler();
-                        menuHandler.openMenu(((Player) sender), menuHandler.MENU.HELP.get(((Player) sender)));
-                    });
-                } else {
-                    Lang.Array.CONSOLE_HELP.send(sender);
-                }
-            }
-        });
+						}
+						PlayerOpenMenuEvent event = new PlayerOpenMenuEvent((Player) sender);
+						Bukkit.getServer().getPluginManager().callEvent(event);
+						MenuHandler menuHandler = ArtMap.instance().getMenuHandler();
+						menuHandler.openMenu(((Player) sender), menuHandler.MENU.HELP.get(((Player) sender)));
+					});
+				} else {
+					Lang.Array.CONSOLE_HELP.send(sender);
+				}
+			}
+		});
 		commands.put("reload", new AsyncCommand("artmap.admin", "/art reload", true) {
-            @Override
-            public void runCommand(CommandSender sender, String[] args, ReturnMessage msg) {
-                ArtMap.instance().getScheduler().SYNC.run(() -> {
-                    JavaPlugin plugin = ArtMap.instance();
-                    plugin.onDisable();
-                    plugin.onEnable();
-                    sender.sendMessage(Lang.PREFIX + ChatColor.GREEN + "Successfully reloaded ArtMap!");
-                });
-            }
-        });
-    }
+			@Override
+			public void runCommand(CommandSender sender, String[] args, ReturnMessage msg) {
+				ArtMap.instance().getScheduler().SYNC.run(() -> {
+					JavaPlugin plugin = ArtMap.instance();
+					plugin.onDisable();
+					plugin.onEnable();
+					sender.sendMessage(Lang.PREFIX + ChatColor.GREEN + "Successfully reloaded ArtMap!");
+				});
+			}
+		});
+	}
 
-    @Override
-    public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
+	@Override
+	public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
 		// handle quoted arguements since spigot does not
 		String[] fixedArgs = fixQuotedArgs(args);
 
@@ -176,19 +176,19 @@ public class CommandHandler implements CommandExecutor {
 
 			if (commands.containsKey(fixedArgs[0].toLowerCase())) {
 				commands.get(fixedArgs[0].toLowerCase()).runPlayerCommand(sender, fixedArgs);
-            } else {
-                Lang.HELP.send(sender);
-            }
+			} else {
+				Lang.HELP.send(sender);
+			}
 
-        } else {
+		} else {
 			commands.get("help").runPlayerCommand(sender, fixedArgs);
-        }
-        return true;
-    }
+		}
+		return true;
+	}
 
 	/**
 	 * Combines "" arguments.
-	 * 
+	 *
 	 * @param args The original args.
 	 * @return The combined args.
 	 */

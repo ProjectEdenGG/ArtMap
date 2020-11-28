@@ -6,17 +6,17 @@ package me.Fupery.ArtMap.Exception;
  */
 public class DuplicateArtworkException extends ArtMapException {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 
-    public DuplicateArtworkException(String msg) {
-        super(msg);
-    }
+	public DuplicateArtworkException(String msg) {
+		super(msg);
+	}
 
-    public DuplicateArtworkException(String msg, Throwable exception) {
-        super(msg,exception);
-    }
+	public DuplicateArtworkException(String msg, Throwable exception) {
+		super(msg, exception);
+	}
 
 }

@@ -1,16 +1,5 @@
 package me.Fupery.ArtMap.Menu.HelpMenu;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
 import me.Fupery.ArtMap.ArtMap;
 import me.Fupery.ArtMap.Config.Lang;
 import me.Fupery.ArtMap.IO.MapArt;
@@ -20,6 +9,16 @@ import me.Fupery.ArtMap.Menu.Button.Button;
 import me.Fupery.ArtMap.Menu.Event.MenuCloseReason;
 import me.Fupery.ArtMap.Menu.Handler.CacheableMenu;
 import me.Fupery.ArtMap.Recipe.ArtItem;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
 
 public class DeleteConfirmationMenu extends ListMenu implements ChildMenu {
 	private ArtistArtworksMenu parent;
@@ -81,7 +80,7 @@ public class DeleteConfirmationMenu extends ListMenu implements ChildMenu {
 						} catch (SQLException | NoSuchFieldException | IllegalAccessException e) {
 							ArtMap.instance().getLogger().log(Level.SEVERE, "Error deleting artwork!!", e);
 							player.sendMessage("Error deleting Artwork check logs.");
-							return; 
+							return;
 						}
 					} else {
 						player.sendMessage(Lang.NO_PERM.get());
@@ -91,5 +90,7 @@ public class DeleteConfirmationMenu extends ListMenu implements ChildMenu {
 				});
 			}
 		}
+
 	}
+
 }

@@ -1,17 +1,5 @@
 package me.Fupery.ArtMap.Painting;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 import me.Fupery.ArtMap.ArtMap;
 import me.Fupery.ArtMap.Config.Lang;
 import me.Fupery.ArtMap.Easel.Canvas;
@@ -20,17 +8,28 @@ import me.Fupery.ArtMap.Easel.EaselEffect;
 import me.Fupery.ArtMap.Exception.ArtMapException;
 import me.Fupery.ArtMap.Exception.DuplicateArtworkException;
 import me.Fupery.ArtMap.Exception.PermissionException;
-import me.Fupery.ArtMap.IO.MapArt;
-import me.Fupery.ArtMap.IO.TitleFilter;
 import me.Fupery.ArtMap.IO.Database.Map;
+import me.Fupery.ArtMap.IO.MapArt;
 import me.Fupery.ArtMap.IO.Protocol.In.Packet.ArtistPacket;
 import me.Fupery.ArtMap.IO.Protocol.In.Packet.ArtistPacket.PacketInteract.InteractType;
 import me.Fupery.ArtMap.IO.Protocol.In.Packet.PacketType;
+import me.Fupery.ArtMap.IO.TitleFilter;
 import me.Fupery.ArtMap.Painting.Brush.BrushAction;
 import me.Fupery.ArtMap.Recipe.ArtMaterial;
 import me.Fupery.ArtMap.Utils.ItemUtils;
 import net.wesjd.anvilgui.AnvilGUI;
 import net.wesjd.anvilgui.AnvilGUI.Response;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 public class ArtistHandler {
 
@@ -111,7 +110,7 @@ public class ArtistHandler {
 						} catch (SQLException | IOException | NoSuchFieldException | IllegalAccessException | ArtMapException sqe) {
 							player.sendMessage(String.format(Lang.PREFIX + Lang.SAVE_FAILURE.get(), title));
 							ArtMap.instance().getLogger().log(Level.SEVERE, "Error saving artwork!", sqe);
-						} 
+						}
 					});
 					return Response.close();
 				});
@@ -140,14 +139,14 @@ public class ArtistHandler {
 	}
 
 	public boolean containsPlayer(Player player) {
-		if(player==null) {
+		if (player == null) {
 			return false;
 		}
 		return (artists.containsKey(player.getUniqueId()));
 	}
 
 	public boolean containsPlayer(UUID player) {
-		if(player==null) {
+		if (player == null) {
 			return false;
 		}
 		return artists.containsKey(player);
@@ -177,7 +176,7 @@ public class ArtistHandler {
 			try {
 				removePlayer(Bukkit.getPlayer(uuid));
 			} catch (SQLException | IOException e) {
-				ArtMap.instance().getLogger().log(Level.SEVERE,"Error clearing players art session!",e);
+				ArtMap.instance().getLogger().log(Level.SEVERE, "Error clearing players art session!", e);
 			}
 		}
 	}
@@ -190,4 +189,5 @@ public class ArtistHandler {
 		clearPlayers();
 		ArtMap.instance().getProtocolManager().PACKET_RECIEVER.close();
 	}
+
 }

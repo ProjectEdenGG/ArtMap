@@ -5,5 +5,6 @@ import org.bukkit.entity.Player;
 
 public interface ReflectionHandler extends CompatibilityHandler {
 
-    Channel getPlayerChannel(Player player) throws ReflectiveOperationException;
+	Channel getPlayerChannel(Player player) throws ReflectiveOperationException;
+
 }
