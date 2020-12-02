@@ -14,7 +14,7 @@
 #
 # Any time you see "/art", leave that unchanged as well (this is the help command)
 #
-# Any time you see § next to a number or letter (something like §a or §2), this is a colour code
+# Any time you see § next to a number or letter (something like §a or §2), this is a color code
 
 #---------------------------------------[Player Messages]---------------------------------------#
 COMMAND_SAVE: "save"
@@ -115,7 +115,7 @@ ITEM_NAME_FEATHER: "§e•§6§lTint§e•"
 ITEM_NAME_COAL: "§e•§6§lShade§e•"
 ITEM_NAKE_FEATHER: "Feather"
 ITEM_NAME_SPONGE: "§e•§6§lEyedropper§e•"
-ITEM_SPONGE_MESSAGE: "Picked up Dye colour"
+ITEM_SPONGE_MESSAGE: "Picked dye color"
 ARTKIT_NEXT: "Next"
 ARTKIT_PREV: "Prev"
 #---------------------------------------[Menu Buttons]---------------------------------------#
@@ -133,7 +133,7 @@ HELP_GETTING_STARTED:
   - "   §7or you can use §6/art save §7to save§7."
   - ""
   - "§a§oLook at the other tabs in this menu to see more"
-  - "§a§oinformation on Recipes, Tools, and Dye Colours."
+  - "§a§oinformation on Recipes, Tools, and Dye Colors."
 HELP_RECIPES:
   - "§6§l⊱§e§lRecipes§6§l⊰"
   - "§7View the crafting recipes for all"
@@ -146,7 +146,7 @@ HELP_TOOLS:
   - "§a✸§2§oClick to View§a✸"
 HELP_DYES:
   - "§6§l⊱§e§lDyes§6§l⊰"
-  - "§7View all the dye colours"
+  - "§7View all the dye colors"
   - "§7that you can paint with."
   - "§a✸§2§oClick to View§a✸"
 HELP_LIST:
@@ -159,7 +159,7 @@ HELP_CLOSE:
   - "§6§l⊱§e§lBack§6§l⊰"
   - "§4﴾§cClose Menu§4﴿"
 INFO_DYES:
-  - "§6§l⊱§e§lDye Colours§6§l⊰"
+  - "§6§l⊱§e§lDye Colors§6§l⊰"
   - "§7Click your canvas with any of these"
   - "§7dyes to paint."
   - ""
@@ -204,8 +204,8 @@ TOOL_COMPASS:
   - "§7Right-Click to flip vertically."
 TOOL_SPONGE:
   - "§b§oSponge"
-  - "§7Left-Click to grab a colour."
-  - "§7Right-Click to paint with the colour."
+  - "§7Left-Click to grab a color."
+  - "§7Right-Click to paint with the color."
 RECIPE_EASEL:
   - "§b§oSit at me!"
   - "§7Use to edit artworks"
@@ -282,6 +282,13 @@ DYE_BROWN_TERRACOTTA: "Podzol Brown"
 DYE_GREEN_TERRACOTTA: "Mold Green"
 DYE_RED_TERRACOTTA: "Apple Red"
 DYE_BLACK_TERRACOTTA: "Almost-Black Brown"
+DYE_CRIMSON_NYLIUM: "Crimson Nylium"
+DYE_CRIMSON_STEM: "Crimson Stem"
+DYE_CRIMSON_HYPHAE: "Crimson Hyphae"
+DYE_WARPED_NYLIUM: "Warped Nylium"
+DYE_WARPED_STEM: "Warped Stem"
+DYE_WARPED_HYPHAE: "Warped Hyphae"
+DYE_WARPED_WART_BLOCK: "Warped Wart Block"
 
 #-------------------------------------[Artwork Title Filter]-------------------------------------#
 #Words in the following list are filtered from artwork titles:
@@ -299,5 +306,3 @@ ILLEGAL_EXPRESSIONS:
   - "\\b(w+(\\W|\\d|_)*h+(\\W|\\d|_)*o+(\\W|\\d|_)*r+(\\W|\\d|_)*e+(\\W|\\d|_)*)"
   - "\\b(s+(\\W|\\d|_)*l+(\\W|\\d|_)*u+(\\W|\\d|_)*t+(\\W|\\d|_)*)"
   - "\\b(f+(\\W|\\d|_)*a+(\\W|\\d|_)*g+(\\W|\\d|_)*g+(\\W|\\d|_)*o+(\\W|\\d|_)*t+(\\W|\\d|_)*)"
-RECIPE_PLAYER_MAP_COPY: Right click to get item. Will use one empty map!
-RECIPE_PLAYER_MAP_COPY_MISSING: You do not have an empty map to create a copy!

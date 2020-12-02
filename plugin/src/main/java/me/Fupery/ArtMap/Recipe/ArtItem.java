@@ -6,7 +6,7 @@ import me.Fupery.ArtMap.Colour.DyeType;
 import me.Fupery.ArtMap.Colour.Palette;
 import me.Fupery.ArtMap.Config.Lang;
 import me.Fupery.ArtMap.Utils.ItemUtils;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -19,10 +19,10 @@ import java.util.List;
 import java.util.logging.Level;
 
 import static me.Fupery.ArtMap.Config.Lang.RECIPE_ARTWORK_ARTIST;
-import static org.bukkit.ChatColor.DARK_GREEN;
-import static org.bukkit.ChatColor.GOLD;
-import static org.bukkit.ChatColor.ITALIC;
-import static org.bukkit.ChatColor.YELLOW;
+import static net.md_5.bungee.api.ChatColor.DARK_GREEN;
+import static net.md_5.bungee.api.ChatColor.GOLD;
+import static net.md_5.bungee.api.ChatColor.ITALIC;
+import static net.md_5.bungee.api.ChatColor.YELLOW;
 
 public class ArtItem {
 

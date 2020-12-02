@@ -1,7 +1,7 @@
 package me.Fupery.ArtMap.Colour;
 
 import me.Fupery.ArtMap.Painting.Pixel;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 
 public class ShadingDye extends ArtDye {

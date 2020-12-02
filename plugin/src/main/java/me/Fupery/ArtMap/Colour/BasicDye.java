@@ -1,7 +1,7 @@
 package me.Fupery.ArtMap.Colour;
 
 import me.Fupery.ArtMap.Painting.Pixel;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 
 public class BasicDye extends ArtDye {
@@ -14,7 +14,6 @@ public class BasicDye extends ArtDye {
 	protected BasicDye(String localizedName, String englishName, int colour, ChatColor chatColor, Material material) {
 		super(localizedName, englishName, chatColor, material);
 		this.colour = (byte) colour;
-
 	}
 
 	/**

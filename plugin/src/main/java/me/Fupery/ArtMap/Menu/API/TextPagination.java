@@ -69,7 +69,7 @@ public class TextPagination {
 		}
 		// current page text
 		String middle = ChatColor.GOLD + headerText + " :: " + ChatColor.YELLOW + Lang.SEARCH_PAGE.get() + " "
-				+ ChatColor.RED + currentPage + Lang.SEARCH_PAGE_SEPERATOR.get() + lastpage;
+				+ ChatColor.RED + currentPage + Lang.SEARCH_PAGE_SEPARATOR.get() + lastpage;
 
 		int edgeSize = ((MAX_COLUMNS - middle.length()) / 2) - 4;
 		StringBuilder sb = new StringBuilder(edgeSize);
